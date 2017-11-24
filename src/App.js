@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import './App.css';
 import Home from './components/Home.js';
-
+import ReactRouter, { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
+import NewGame from './components/NewGame.js';
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Emoji Game</h1>
-        </header>
-        <div className="App-intro">
-          <Home/>
-        </div>
+      <div className="Home">
+        <Router>
+          <Switch>
+            <Route exact path='/' component={Home}/>
+            <Route exact path='/newGame' component={NewGame}/>
+          </Switch>
+        </Router>
       </div>
     );
   }

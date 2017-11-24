@@ -1,12 +1,22 @@
+
+.App {
+  text-align: center;
+}
+
 .Home {
   text-align: center;
+
 }
 
 .Home-header {
   background-color: #222;
-  height: 150px;
+  height: 220px;
   padding: 20px;
   color: white;
+  background-image: url('./photos/ee.gif');
+  background-size: contain;
+  font-family: 'Fredoka One', cursive;
+  font-size: 2vw;
 }
 
 .Home-title {
@@ -15,4 +25,48 @@
 
 .Home-intro {
   font-size: large;
+}
+
+.home-game-list li {
+  color: white;
+  list-style: none;
+  font-family: 'Fredoka One', cursive;
+  font-size: 5vw;
+}
+
+li:hover{
+  color: yellow;
+}
+
+.home-new-game {
+
+}
+.new-game-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Fredoka One', cursive;
+  color: white;
+}
+.new-game-main p {
+   font-size: 2vw;
+}
+
+.select-theme {
+  width: 50%;
+
+}
+
+.new-game-input {
+  width: 25%;
+  background-color: #25222c;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  margin: 15px;
+  color: white;
+}
+.new-game-input:focus {
+  outline: none;
 }

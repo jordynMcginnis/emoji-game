@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 
 class Home extends React.Component {
   render () {
@@ -6,9 +8,15 @@ class Home extends React.Component {
       <div className="Home">
         <header className="Home-header">
           <h1 className="Home-title">Emoji Game</h1>
+          <Link to='/newGame' >
+            <button className='home-new-game'>Create New Game</button>
+          </Link>
         </header>
         <div className="Home-intro">
-          <Home/>
+          <ul className='home-game-list'>
+            <li> Mcginnis Family </li>
+            <li> Jordyns Game </li>
+          </ul>
         </div>
       </div>
     )
