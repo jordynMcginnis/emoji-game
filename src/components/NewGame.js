@@ -37,6 +37,7 @@ class NewGame extends React.Component {
             { value: 'christmasFood', label: 'Christmas Food' },
             { value: 'Elf', label: 'Elf the movie' },
             { value: 'cities', label: 'Cities' },
+
           ]}
         />
         <input

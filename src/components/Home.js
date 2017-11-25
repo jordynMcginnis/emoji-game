@@ -16,7 +16,9 @@ class Home extends React.Component {
         </header>
         <div className="Home-intro">
           <ul className='home-game-list'>
-            <li> Mcginnis Family </li>
+            <Link to='/game'>
+              <li> Mcginnis Family </li>
+            </Link>
             <li> Jordyns Game </li>
           </ul>
         </div>
