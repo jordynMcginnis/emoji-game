@@ -7,10 +7,12 @@ class Home extends React.Component {
     return (
       <div className="Home">
         <header className="Home-header">
-          <h1 className="Home-title">Emoji Game</h1>
-          <Link to='/newGame' >
-            <button className='home-new-game'>Create New Game</button>
-          </Link>
+          <div className='top-titles'>
+            <h1 className="Home-title">Emoji Game</h1>
+            <Link to='/newGame' >
+              <button className='home-new-game'>Create New Game</button>
+            </Link>
+          </div>
         </header>
         <div className="Home-intro">
           <ul className='home-game-list'>

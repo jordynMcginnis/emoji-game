@@ -15,8 +15,6 @@ class NewGame extends React.Component {
   }
   handleChange (selectedOption) {
     this.setState({selectedOption});
-    console.log(`Selected: ${selectedOption.label}`)
-    console.log(this.state.selectedOption)
   }
   handleNameChange({target}) {
     this.setState(() => ({
@@ -29,13 +27,16 @@ class NewGame extends React.Component {
       <div className ='new-game-main'>
         <p>Select a theme:</p>
         <Select
-          className='select-theme'
+          className='new-game-theme'
           name="form-field-name"
-          value={this.state.value}
+          value={this.state.selectedOption}
           onChange={this.handleChange}
           options={[
             { value: 'christmasSongs', label: 'Christmas Songs' },
-            { value: 'test', label: 'Other theme' },
+            { value: 'chirstmasCharacters', label: 'Christmas Movie Characters' },
+            { value: 'christmasFood', label: 'Christmas Food' },
+            { value: 'Elf', label: 'Elf the movie' },
+            { value: 'cities', label: 'Cities' },
           ]}
         />
         <input
@@ -44,7 +45,7 @@ class NewGame extends React.Component {
           className='new-game-input'
         />
         <Link to ='/'>
-          <button>Submit</button>
+          <button className='new-game-submit'>Submit</button>
         </Link>
       </div>
     )
