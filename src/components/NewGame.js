@@ -2,6 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { Link } from 'react-router-dom';
+import { createGame } from '../api/index.js';
 
 class NewGame extends React.Component {
   constructor(props){
@@ -12,15 +13,21 @@ class NewGame extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
+    this.submitGameInfo = this.submitGameInfo.bind(this);
   }
-  handleChange (selectedOption) {
+  handleChange (input) {
+    const selectedOption = input.value
     this.setState({selectedOption});
   }
   handleNameChange({target}) {
     this.setState(() => ({
       gameName : target.value,
     }))
-    console.log(this.state.gameName)
+  }
+  submitGameInfo() {
+    const { selectedOption, gameName } = this.state;
+
+    createGame(selectedOption, gameName);
   }
   render () {
     return (
@@ -37,7 +44,6 @@ class NewGame extends React.Component {
             { value: 'christmasFood', label: 'Christmas Food' },
             { value: 'Elf', label: 'Elf the movie' },
             { value: 'cities', label: 'Cities' },
-
           ]}
         />
         <input
@@ -46,7 +52,7 @@ class NewGame extends React.Component {
           className='new-game-input'
         />
         <Link to ='/'>
-          <button className='new-game-submit'>Submit</button>
+          <button className='new-game-submit' onClick={this.submitGameInfo}>Submit</button>
         </Link>
       </div>
     )

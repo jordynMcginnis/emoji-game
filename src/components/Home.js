@@ -1,8 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { getGameList } from '../api/index.js'
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      gameList : {3296: {gameName : 'jordynnn', selectedTheme:'Elf'}}
+    }
+    this.getGames = this.getGames.bind(this);
+  }
+  componentDidMount () {
+    this.getGames()
+  }
+  getGames () {
+    const list = getGameList()
+    this.setState(() => ({
+      gameList : list
+    }))
+  }
   render () {
     return (
       <div className="Home">
@@ -16,10 +32,11 @@ class Home extends React.Component {
         </header>
         <div className="Home-intro">
           <ul className='home-game-list'>
-            <Link to='/game'>
-              <li> Mcginnis Family </li>
-            </Link>
-            <li> Jordyns Game </li>
+            {Object.keys(this.state.gameList).map((key) => (
+              <Link to={`/game/${key}`} key={key}>
+                <li key={key}> {this.state.gameList[key]['gameName']} </li>
+              </Link>
+            ))})
           </ul>
         </div>
       </div>
