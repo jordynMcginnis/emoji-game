@@ -44,3 +44,11 @@ export function getTeamList (id) {
     const teamList = fakeFirebaseDatabase[id]['teams'] = { team1: team1, team2: team2};
     return teamList
 }
+
+export function getEmojiWord () {
+
+}
+
+export function postEmoji (emoji) {
+
+}

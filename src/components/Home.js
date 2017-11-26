@@ -36,7 +36,7 @@ class Home extends React.Component {
               <Link to={`/game/${key}`} key={key}>
                 <li key={key}> {this.state.gameList[key]['gameName']} </li>
               </Link>
-            ))})
+            ))}
           </ul>
         </div>
       </div>

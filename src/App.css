@@ -151,10 +151,12 @@ li:hover{
   font-family: 'Fredoka One', cursive;
   color: red;
   width: 95%;
-  background-image: url('./photos/happy.gif');
+  height: 100%;
+  background-image: url('./photos/poopy.gif');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  font-size: 6vw;
 }
 
 
@@ -170,7 +172,103 @@ li:hover{
   color: #f14b5e;
 }
 .player-list-main h2 {
-  color:
-#ffd267;
+  color: #ffd267;
 }
 
+.loading {
+  background-color: white;
+  height: 100vh;
+  width: 100vw;
+  background-image: url('./photos/surf2.gif');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+
+
+.emoji-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka One', cursive;
+
+}
+
+.emoji-input {
+  width: 95%;
+  background-color: #25222c;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  margin: 15px;
+  color: white;
+}
+
+.emoji-input:focus {
+  outline:none;
+}
+
+.emoji-button {
+  padding: 10px;
+  border-radius: 5px;
+  border-color: #b4b8c2;
+  background-color: transparent;
+  color: white;
+}
+
+.emoji-submit {
+  background-image: url('./photos/unicorn.gif');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  width: 100vw;
+  height: 100vh;
+}
+
+.emoji-input1{
+  width: 75%;
+  background-color: #25222c;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  margin: 15px;
+  color: white;
+  background-color: transparent;
+}
+.emoji-input1:focus {
+  outline:none;
+}
+.emoji-button1 {
+  padding: 25px;
+  border-radius: 5px;
+  border-color: white;
+  border-width: 2px;
+  background-color: transparent;
+  color: white;
+  margin: 10px;
+}
+
+
+.submit-winner {
+  background-image: url('./photos/poop.gif');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center top;
+  background-color: #e3e3e8;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.emoji-buttons {
+  padding: 25px;
+  border-radius: 5px;
+  border-color: white;
+  border-width: 2px;
+  background-color: transparent;
+  color: white;
+  margin: 10px;
+}

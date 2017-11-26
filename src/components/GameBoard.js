@@ -1,6 +1,6 @@
 import React from 'react';
 import { saveUserName, getTeamList } from '../api/index.js';
-
+import EmojiPicker from './EmojiPicker.js'
 
 class GameBoard extends React.Component {
   constructor(props){
@@ -8,7 +8,7 @@ class GameBoard extends React.Component {
     this.state = {
       name : '',
       teamList: {},
-      render : 'name'
+      render : 'EmojiPicker'
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
@@ -37,7 +37,6 @@ class GameBoard extends React.Component {
     }, 4000)
   }
   render () {
-
     return (
       <div className='game-board-main'>
         {this.state.render === 'name'
@@ -47,7 +46,7 @@ class GameBoard extends React.Component {
             </div>
           : null
         }
-        {this.state.render === 'loading' ? this.state.render : null}
+        {this.state.render === 'loading' ? <div className='loading'></div> : null}
         {this.state.teamList.team2 !== undefined
           ? <div className= 'player-list-main'>
               <div className='team1'>
@@ -67,6 +66,10 @@ class GameBoard extends React.Component {
                 </ul>
               </div>
             </div>
+          : null
+        }
+        { this.state.render ==='EmojiPicker'
+          ? <EmojiPicker/>
           : null
         }
        </div>
