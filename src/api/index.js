@@ -1,6 +1,6 @@
 const fakeFirebaseDatabase = {
-  3296: {gameName : 'McGinnis Family', selectedTheme:'Elf', players: ['stacey','shawn','jordyn','tyler']},
-  4567: {gameName : 'santa', selectedTheme:'christmasSongs', players: []},
+  3296: {gameName : 'McGinnis Family', selectedTheme:'Elf', players: ['stacey','shawn','jordyn','tyler'], emoji : { team1 : '😂', team2: '😂'}},
+  4567: {gameName : 'santa', selectedTheme:'christmasSongs', players: [], emoji : { team1 : '', team2: ''}},
 }
 
 //new game
@@ -55,6 +55,10 @@ export function emojiWord () {
   return 'Santa Baby'
 }
 
-export function postEmoji (emoji) {
+export function postEmoji (emoji1) {
+  fakeFirebaseDatabase[3296]['emoji'].team1 = emoji1
+}
 
+export function getEmoji (team) {
+  return fakeFirebaseDatabase[3296]['emoji'][team]
 }

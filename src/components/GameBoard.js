@@ -1,5 +1,5 @@
 import React from 'react';
-import { saveUserName, getTeamList, emojiPickerPlayer } from '../api/index.js';
+import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji } from '../api/index.js';
 import EmojiPicker from './EmojiPicker.js'
 
 class GameBoard extends React.Component {
@@ -8,12 +8,15 @@ class GameBoard extends React.Component {
     this.state = {
       name : '',
       teamList: {},
-      render : 'name'
+      render : 'name',
+      playersTeam: '',
+      currentEmoji: ''
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
     this.grabTeamList = this.grabTeamList.bind(this);
     this.getEmojiPicker = this.getEmojiPicker.bind(this);
+    this.grabEmojis = this.grabEmojis.bind(this);
   }
   handleName ({ target }) {
     this.setState(() => ({
@@ -30,23 +33,33 @@ class GameBoard extends React.Component {
     this.grabTeamList(id);
   }
   grabTeamList (id) {
+    let team = ''
+    if(getTeamList(id)['team1'].indexOf(this.state.name) > -1){
+      team = 'team1'
+    } else {
+      team = 'team2'
+    }
     setTimeout(()=> {
       this.setState(() => ({
         teamList : getTeamList(id),
-        render: 'teamList'
+        render: 'teamList',
+        playersTeam : team
       }))
       this.getEmojiPicker()
     }, 4000)
-
   }
   getEmojiPicker () {
     setTimeout(() => {
-      {this.state.name === emojiPickerPlayer()
-        ? this.setState(() => ({ render : 'EmojiPicker'}))
-        : this.setState(() => ({ render : 'EmojiGuesser'}))
+      if(this.state.name === emojiPickerPlayer()){
+        this.setState(() => ({ render : 'EmojiPicker'}))
+      }else {
+        this.setState(() => ({ render : 'EmojiGuesser'}));
+        this.grabEmojis()
       }
     }, 4000)
-
+  }
+  grabEmojis () {
+    this.setState(() => ({currentEmoji : getEmoji(this.state.playersTeam)}))
   }
   render () {
     return (
@@ -86,7 +99,11 @@ class GameBoard extends React.Component {
         }
         {
           this.state.render === 'EmojiGuesser'
-          ? <div> guess the emoji!</div>
+          ? <div>
+              <h5>Guess the word!</h5>
+              <h2>{this.state.currentEmoji}</h2>
+              <h5>Shout out the word before the other team!</h5>
+            </div>
           : null
         }
 

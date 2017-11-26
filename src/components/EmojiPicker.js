@@ -1,5 +1,5 @@
 import React from 'react';
-import { emojiWord } from '../api/index.js';
+import { emojiWord, postEmoji } from '../api/index.js';
 
 class EmojiPicker extends React.Component {
   constructor(props){
@@ -24,14 +24,16 @@ class EmojiPicker extends React.Component {
       emojiWord : emojiWord()
     }))
   }
-  submitEmoji () {
-    //is going to also make post request passing in this.state.emoji
-    this.setState(() => ({render: 'submitWinner'}))
-  }
   handleChange ({ target }) {
     this.setState(() => ({
       emoji : target.value,
     }))
+  }
+  submitEmoji () {
+    //is going to also make post request passing in this.state.emoji
+    postEmoji(this.state.emoji)
+    this.setState(() => ({render: 'submitWinner'}))
+
   }
   handleTeam1Winner () {
     this.setState(() => ({
