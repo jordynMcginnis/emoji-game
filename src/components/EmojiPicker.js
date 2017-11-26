@@ -1,5 +1,5 @@
 import React from 'react';
-import { getEmojiWord } from '../api/index.js';
+import { emojiWord } from '../api/index.js';
 
 class EmojiPicker extends React.Component {
   constructor(props){
@@ -19,9 +19,9 @@ class EmojiPicker extends React.Component {
     this.getEmojiWord()
   }
   getEmojiWord () {
-    this.setState(() => {
-      emojiWord : getEmojiWord()
-    })
+    this.setState(() => ({
+      emojiWord : emojiWord()
+    }))
   }
   handleChange ({ target }) {
     this.setState(() => ({
