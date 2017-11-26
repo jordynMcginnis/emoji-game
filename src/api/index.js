@@ -46,7 +46,7 @@ export function getTeamList (id) {
 }
 
 export function getEmojiWord () {
-
+  return 'Santa Baby'
 }
 
 export function postEmoji (emoji) {
