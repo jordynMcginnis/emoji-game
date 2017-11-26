@@ -14,6 +14,7 @@ class EmojiPicker extends React.Component {
     this.handleTeam1Winner = this.handleTeam1Winner.bind(this);
     this.handleTeam2Winner = this.handleTeam2Winner.bind(this);
     this.getEmojiWord = this.getEmojiWord.bind(this);
+    this.submitEmoji = this.submitEmoji.bind(this);
   }
   componentDidMount () {
     this.getEmojiWord()
@@ -23,9 +24,13 @@ class EmojiPicker extends React.Component {
       emojiWord : emojiWord()
     }))
   }
+  submitEmoji () {
+    //is going to also make post request passing in this.state.emoji
+    this.setState(() => ({render: 'submitWinner'}))
+  }
   handleChange ({ target }) {
     this.setState(() => ({
-      emoji : target.value
+      emoji : target.value,
     }))
   }
   handleTeam1Winner () {
@@ -45,7 +50,7 @@ class EmojiPicker extends React.Component {
           ? <div className='emoji-submit'>
               <h1>{this.state.emojiWord}</h1>
               <input placeholder='Enter Emoji' className='emoji-input1' onChange={this.handleChange}/>
-              <button className='emoji-button1'>Submit</button>
+              <button className='emoji-button1' onClick={this.submitEmoji}>Submit</button>
               <p>Enter some emojis to help your team guess the word above!</p>
             </div>
           : null
@@ -53,7 +58,7 @@ class EmojiPicker extends React.Component {
          {
           this.state.render === 'submitWinner'
             ? <div className='submit-winner'>
-                <h1>Santa Baby</h1>
+                <h1>{this.state.emojiWord}</h1>
                 <button onClick={this.handleTeam1Winner} className='emoji-buttons'>Team 1</button>
                 <button onClick={this.handleTeam2Winner} className='emoji-buttons'>Team 2</button>
               </div>
