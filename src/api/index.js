@@ -45,6 +45,12 @@ export function getTeamList (id) {
     return teamList
 }
 
+export function emojiPickerPlayer (team) {
+  //this will return the 2 names of the pickedPlayers
+  //passes in the team they are in...
+  return 'jordyn'
+}
+
 export function emojiWord () {
   return 'Santa Baby'
 }

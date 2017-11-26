@@ -1,5 +1,5 @@
 import React from 'react';
-import { saveUserName, getTeamList } from '../api/index.js';
+import { saveUserName, getTeamList, emojiPickerPlayer } from '../api/index.js';
 import EmojiPicker from './EmojiPicker.js'
 
 class GameBoard extends React.Component {
@@ -8,11 +8,12 @@ class GameBoard extends React.Component {
     this.state = {
       name : '',
       teamList: {},
-      render : 'EmojiPicker'
+      render : 'name'
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
     this.grabTeamList = this.grabTeamList.bind(this);
+    this.getEmojiPicker = this.getEmojiPicker.bind(this);
   }
   handleName ({ target }) {
     this.setState(() => ({
@@ -34,7 +35,18 @@ class GameBoard extends React.Component {
         teamList : getTeamList(id),
         render: 'teamList'
       }))
+      this.getEmojiPicker()
     }, 4000)
+
+  }
+  getEmojiPicker () {
+    setTimeout(() => {
+      {this.state.name === emojiPickerPlayer()
+        ? this.setState(() => ({ render : 'EmojiPicker'}))
+        : this.setState(() => ({ render : 'EmojiGuesser'}))
+      }
+    }, 4000)
+
   }
   render () {
     return (
@@ -47,7 +59,7 @@ class GameBoard extends React.Component {
           : null
         }
         {this.state.render === 'loading' ? <div className='loading'></div> : null}
-        {this.state.teamList.team2 !== undefined
+        {this.state.render === 'teamList'
           ? <div className= 'player-list-main'>
               <div className='team1'>
                 <h2>Team 1:</h2>
@@ -72,6 +84,12 @@ class GameBoard extends React.Component {
           ? <EmojiPicker/>
           : null
         }
+        {
+          this.state.render === 'EmojiGuesser'
+          ? <div> guess the emoji!</div>
+          : null
+        }
+
        </div>
     )
   }

@@ -46,6 +46,7 @@ class EmojiPicker extends React.Component {
               <h1>{this.state.emojiWord}</h1>
               <input placeholder='Enter Emoji' className='emoji-input1' onChange={this.handleChange}/>
               <button className='emoji-button1'>Submit</button>
+              <p>Enter some emojis to help your team guess the word above!</p>
             </div>
           : null
          }
