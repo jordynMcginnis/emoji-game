@@ -28,8 +28,8 @@ export function saveUserName (id,name) {
 
 export function getTeamList (id) {
     const playersList = fakeFirebaseDatabase[id].players;
-    const team1 = [];
-    const team2 = [];
+    let team1 = [];
+    let team2 = [];
     let currentTeam = 'team1';
     for(var i = 0; i < playersList.length; i++){
       if(currentTeam === 'team1'){
@@ -55,10 +55,14 @@ export function emojiWord () {
   return 'Santa Baby'
 }
 
-export function postEmoji (emoji1) {
-  fakeFirebaseDatabase[3296]['emoji'].team1 = emoji1
+export function postEmoji (emoji1, team) {
+  fakeFirebaseDatabase[3296]['emoji'][team] = emoji1
 }
 
 export function getEmoji (team) {
   return fakeFirebaseDatabase[3296]['emoji'][team]
+}
+
+export function addPoint (team) {
+  console.log(team + ' gets a point!')
 }

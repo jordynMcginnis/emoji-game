@@ -94,7 +94,7 @@ class GameBoard extends React.Component {
           : null
         }
         { this.state.render ==='EmojiPicker'
-          ? <EmojiPicker/>
+          ? <EmojiPicker team={this.state.playersTeam}/>
           : null
         }
         {
