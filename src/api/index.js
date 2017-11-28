@@ -1,3 +1,5 @@
+import { firebasedb } from '../utils/config.js';
+
 const fakeFirebaseDatabase = {
   3296: {gameName : 'McGinnis Family', selectedTheme:'Elf', players: ['stacey','shawn','jordyn','tyler'], emoji : { team1 : '😂', team2: '😂'}},
   4567: {gameName : 'santa', selectedTheme:'christmasSongs', players: [], emoji : { team1 : '', team2: ''}},
@@ -9,8 +11,19 @@ function getRandomArbitrary(min, max) {
 }
 
 export function createGame (theme, name) {
-  const gameId = getRandomArbitrary(1000, 5000);
-  fakeFirebaseDatabase[gameId] = { selectedTheme: theme, gameName: name, players : []}
+  //const gameId = getRandomArbitrary(1000, 5000);
+  //fakeFirebaseDatabase[gameId] = { selectedTheme: theme, gameName: name, players : []}
+  const gameData = {
+    name : name,
+    theme: theme
+  };
+  //get random keyId
+  const key = firebasedb.ref().child('games').push().key;
+  var updates = {};
+  updates['/games/' + key] = gameData;
+  return firebasedb.ref().update(updates);
+
+
 }
 
 export function getGameList () {

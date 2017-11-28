@@ -1,17 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getGameList } from '../api/index.js'
+import { firebasedb } from '../utils/config.js'
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gameList : {3296: {gameName : 'jordynnn', selectedTheme:'Elf'}}
+      gameList : [],
     }
     this.getGames = this.getGames.bind(this);
   }
   componentDidMount () {
-    this.getGames()
+    const gamesRef = firebasedb.ref('games');
+    gamesRef.on('value', (snapshot) => {
+      const games = snapshot.val();
+      console.log(games);
+      let gameList = [];
+      for(let item in games) {
+        gameList.push({
+          id : item,
+          gameName: games[item].name,
+          selectedTheme: games[item].theme
+        });
+      }
+      this.setState({
+        gameList
+      });
+    });
   }
   getGames () {
     const list = getGameList()
@@ -32,9 +48,9 @@ class Home extends React.Component {
         </header>
         <div className="Home-intro">
           <ul className='home-game-list'>
-            {Object.keys(this.state.gameList).map((key) => (
-              <Link to={`/game/${key}`} key={key}>
-                <li key={key}> {this.state.gameList[key]['gameName']} </li>
+            {this.state.gameList.map(({ gameName, id, selectedTheme }) => (
+              <Link to={`/game/${id}`} key={id}>
+                <li> {gameName} </li>
               </Link>
             ))}
           </ul>
