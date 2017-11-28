@@ -7,7 +7,6 @@ class EmojiPicker extends React.Component {
     this.state = {
       emojiWord: '',
       emoji: '',
-      winner: '',
       render: 'submit'
     }
     this.handleChange = this.handleChange.bind(this);
@@ -35,23 +34,14 @@ class EmojiPicker extends React.Component {
     this.setState(() => ({render: 'submitWinner'}))
 
   }
-  handleTeam1Winner () {
+  handleTeamWinner (winner) {
     this.setState(() => ({
-      winner: 'team1',
+      winner
     }))
-    setTimeout(() => {
-      addPoint(this.state.winner)
-    },2000)
 
-  }
-  handleTeam2Winner () {
-    this.setState(() => ({
-      winner: 'team2'
-    }))
     setTimeout(() => {
-      addPoint(this.state.winner)
+      addPoint(winner)
     },2000)
-
   }
   render () {
     return (
@@ -64,16 +54,16 @@ class EmojiPicker extends React.Component {
               <p>Enter some emojis to help your team guess the word above!</p>
             </div>
           : null
-         }
-         {
-          this.state.render === 'submitWinner'
-            ? <div className='submit-winner'>
-                <h1>{this.state.emojiWord}</h1>
-                <button onClick={this.handleTeam1Winner} className='emoji-buttons'>Team 1</button>
-                <button onClick={this.handleTeam2Winner} className='emoji-buttons'>Team 2</button>
-              </div>
-            : null
-         }
+        }
+       {
+        this.state.render === 'submitWinner'
+          ? <div className='submit-winner'>
+              <h1>{this.state.emojiWord}</h1>
+              <button onClick={() => this.handleTeamWinner('team1')} className='emoji-buttons'>Team 1</button>
+              <button onClick={() => this.handleTeamWinner('team2')} className='emoji-buttons'>Team 2</button>
+            </div>
+          : null
+       }
       </div>
     )
   }

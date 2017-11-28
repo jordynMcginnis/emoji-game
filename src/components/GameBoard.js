@@ -33,12 +33,10 @@ class GameBoard extends React.Component {
     this.grabTeamList(id);
   }
   grabTeamList (id) {
-    let team = ''
-    if(getTeamList(id)['team1'].indexOf(this.state.name) > -1){
-      team = 'team1'
-    } else {
-      team = 'team2'
-    }
+    const team = getTeamList(id)['team1'].indexOf(this.state.name) > -1
+      ? 'team1'
+      : 'team2'
+
     setTimeout(()=> {
       this.setState(() => ({
         teamList : getTeamList(id),
@@ -62,22 +60,24 @@ class GameBoard extends React.Component {
     this.setState(() => ({currentEmoji : getEmoji(this.state.playersTeam)}))
   }
   render () {
+    const { render, teamList, currentEmoji, playersTeam } = this.state
+
     return (
       <div className='game-board-main'>
-        {this.state.render === 'name'
+        {render === 'name'
           ? <div className='name-info-main'>
               <input onChange={this.handleName} placeholder='enter name' className='game-board-name-input'/>
-               <button onClick={this.submitName} className='game-board-name-button'>submit</button>
+              <button onClick={this.submitName} className='game-board-name-button'>submit</button>
             </div>
           : null
         }
-        {this.state.render === 'loading' ? <div className='loading'></div> : null}
-        {this.state.render === 'teamList'
+        {render === 'loading' ? <div className='loading'></div> : null}
+        {render === 'teamList'
           ? <div className= 'player-list-main'>
               <div className='team1'>
                 <h2>Team 1:</h2>
                 <ul>
-                  {this.state.teamList.team1.map((player) => {
+                  {teamList.team1.map((player) => {
                     return <li> {player}</li>
                   })}
                 </ul>
@@ -85,7 +85,7 @@ class GameBoard extends React.Component {
               <div className='team2'>
                 <h2> Team 2:</h2>
                 <ul>
-                  {this.state.teamList.team2.map((player) => {
+                  {teamList.team2.map((player) => {
                     return <li> {player}</li>
                   })}
                 </ul>
@@ -93,20 +93,19 @@ class GameBoard extends React.Component {
             </div>
           : null
         }
-        { this.state.render ==='EmojiPicker'
-          ? <EmojiPicker team={this.state.playersTeam}/>
+        { render ==='EmojiPicker'
+          ? <EmojiPicker team={playersTeam}/>
           : null
         }
         {
-          this.state.render === 'EmojiGuesser'
+          render === 'EmojiGuesser'
           ? <div>
               <h5>Guess the word!</h5>
-              <h2>{this.state.currentEmoji}</h2>
+              <h2>{currentEmoji}</h2>
               <h5>Shout out the word before the other team!</h5>
             </div>
           : null
         }
-
        </div>
     )
   }

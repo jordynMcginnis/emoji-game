@@ -23,26 +23,25 @@ export function getGame (id) {
 
 export function saveUserName (id,name) {
   fakeFirebaseDatabase[id].players.push(name);
-  //getTeamList(id);
 }
 
 export function getTeamList (id) {
-    const playersList = fakeFirebaseDatabase[id].players;
-    let team1 = [];
-    let team2 = [];
-    let currentTeam = 'team1';
-    for(var i = 0; i < playersList.length; i++){
-      if(currentTeam === 'team1'){
-        team1.push(playersList[i]);
-        currentTeam = 'team2'
-      } else {
-        team2.push(playersList[i]);
-        currentTeam = 'team1'
-      }
+  const playersList = fakeFirebaseDatabase[id].players;
+  let team1 = [];
+  let team2 = [];
+  let currentTeam = 'team1';
+  for(var i = 0; i < playersList.length; i++){
+    if(currentTeam === 'team1'){
+      team1.push(playersList[i]);
+      currentTeam = 'team2'
+    } else {
+      team2.push(playersList[i]);
+      currentTeam = 'team1'
     }
+  }
 
-    const teamList = fakeFirebaseDatabase[id]['teams'] = { team1: team1, team2: team2};
-    return teamList
+  const teamList = fakeFirebaseDatabase[id]['teams'] = { team1: team1, team2: team2};
+  return teamList
 }
 
 export function emojiPickerPlayer (team) {
