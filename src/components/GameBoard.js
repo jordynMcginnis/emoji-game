@@ -11,7 +11,9 @@ class GameBoard extends React.Component {
       teamList: '',
       render : 'name',
       playersTeam: '',
-      currentEmoji: ''
+      currentEmoji: '',
+      team1List: [1,2,3],
+      team2List: [1,2,3],
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
@@ -26,20 +28,33 @@ class GameBoard extends React.Component {
   }
   componentDidMount() {
   const id = this.props.match.params.id;
-  //const team1 = firebasedb.ref(`games/${id}/teams`);
-  const teamRef = firebasedb.ref(`games/${id}/teams`);
-  teamRef.on('value', (snapshot) => {
+  const team1 = firebasedb.ref(`games/${id}/teams/team1`);
+  team1.on('value', (snapshot) => {
     let items = snapshot.val();
     let newState = [];
     for (let item in items) {
-      newState.push({
-        [item]: items[item],
-      });
+      newState.push(
+        items[item].name
+      );
     }
-    this.setState({
-      teamList: newState
+     this.setState({
+      team1List: newState
     });
-  });
+  })
+  const team2 = firebasedb.ref(`games/${id}/teams/team2`);
+  team2.on('value', (snapshot) => {
+    let items = snapshot.val();
+    //console.log('second' + JSON.stringify(items["-L-4dyiNPLwzpRY0IE-W"].name));
+    let newState = [];
+    for (let item in items) {
+      newState.push(
+        items[item].name
+      );
+    }
+     this.setState({
+      team2List: newState
+    });
+  })
 }
 
   submitName () {
@@ -60,23 +75,9 @@ class GameBoard extends React.Component {
       }))
       this.getEmojiPicker()
     }, 4000)
-    console.log(this.state.teamList[0].team1)
   }
-    /*
-    const team = getTeamList(id)['team1'].indexOf(this.state.name) > -1
-      ? 'team1'
-      : 'team2'
-
-    setTimeout(()=> {
-      this.setState(() => ({
-        teamList : getTeamList(id),
-        render: 'teamList',
-        playersTeam : team
-      }))
-      this.getEmojiPicker()
-    }, 4000)
-  } */
   getEmojiPicker () {
+    const id = this.props.match.params.id;
     /*
     setTimeout(() => {
       if(this.state.name === emojiPickerPlayer()){
@@ -86,13 +87,13 @@ class GameBoard extends React.Component {
         this.grabEmojis()
       }
     }, 4000) */
+    emojiPickerPlayer(id)
   }
   grabEmojis () {
     this.setState(() => ({currentEmoji : getEmoji(this.state.playersTeam)}))
   }
   render () {
     const { render, teamList, currentEmoji, playersTeam } = this.state
-
     return (
       <div className='game-board-main'>
         {render === 'name'
@@ -108,8 +109,7 @@ class GameBoard extends React.Component {
               <div className='team1'>
                 <h2>Team 1:</h2>
                 <ul>
-
-                  {teamList.team1.map((player) => {
+                 {this.state.team1List.map((player) => {
                     return <li> {player}</li>
                   })}
                 </ul>
@@ -117,7 +117,7 @@ class GameBoard extends React.Component {
               <div className='team2'>
                 <h2> Team 2:</h2>
                 <ul>
-                  {teamList.team2.map((player) => {
+                  {this.state.team2List.map((player) => {
                     return <li> {player}</li>
                   })}
                 </ul>

@@ -37,15 +37,19 @@ export function getGame (id) {
 
 export function saveUserName (id, name) {
   //firebasedb.ref(`games/${id}/players`).push(name)
-  var thing = firebasedb.ref(`games/${id}/teamAssign`).once('value').then(function(snapshot){
+  const myName = name;
+  const turn = { turn: false, name: myName }
+  var checkvalue = firebasedb.ref(`games/${id}/teamAssign`).once('value').then(function(snapshot){
     const team1 = (snapshot.val())
+
     if(team1 === false){
-      firebasedb.ref(`games/${id}/teams/team2`).push(name);
+
+      firebasedb.ref(`games/${id}/teams/team2`).push(turn);
       var updates = {};
       updates[`games/${id}/teamAssign`] = true;
       return firebasedb.ref().update(updates)
     } else {
-      firebasedb.ref(`games/${id}/teams/team1`).push(name);
+      firebasedb.ref(`games/${id}/teams/team1`).push(turn);
       var updates = {};
       updates[`games/${id}/teamAssign`] = false;
       return firebasedb.ref().update(updates)
@@ -73,10 +77,29 @@ export function getTeamList (id) {
   return teamList */
 }
 
-export function emojiPickerPlayer (team) {
+export function emojiPickerPlayer (id) {
   //this will return the 2 names of the pickedPlayers
   //passes in the team they are in...
-  return 'jordyn'
+  const team1Values = firebasedb.ref(`games/${id}/teams/team1`).once('value').then(function(snapshot){
+    const team = snapshot.val();
+    console.log('this is the team' + JSON.stringify(team));
+    var count = 0;
+    for(var key in team){
+      if(count <= 0){
+        if(team[key]['turn'] !== 'played'){
+           const person = [key]
+           console.log('p' + person);
+           count++;
+           //changed the person to be 'playing
+           var updates = {};
+           updates[`games/${id}/teams/team1/${person}/turn`] = 'playing';
+           //console.log(updates[`games/${id}/teams/team1/${person}/name`])
+           return firebasedb.ref().update(updates)
+        }
+
+      }
+    }
+  })
 }
 
 export function emojiWord () {
