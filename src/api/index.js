@@ -16,7 +16,9 @@ export function createGame (theme, name) {
   const gameData = {
     name : name,
     theme: theme,
-    teamAssign: false
+    teamAssign: false,
+    roundWinner: {team2: {winner: 'no-winner'}, team1: {winner: 'nothing'}},
+    teamPoints: {team2: {point: 0}, team1: {point: 0}},
   };
   //get random keyId
   const key = firebasedb.ref().child('games').push().key;
@@ -82,13 +84,13 @@ export function emojiPickerPlayer (id) {
   //passes in the team they are in...
   const team1Values = firebasedb.ref(`games/${id}/teams/team1`).once('value').then(function(snapshot){
     const team = snapshot.val();
-    console.log('this is the team' + JSON.stringify(team));
+    //console.log('this is the team' + JSON.stringify(team));
     var count = 0;
     for(var key in team){
       if(count <= 0){
         if(team[key]['turn'] !== 'played'){
            const person = [key]
-           console.log('p' + person);
+           //console.log('p' + person);
            count++;
            //changed the person to be 'playing
            var updates = {};
@@ -100,20 +102,66 @@ export function emojiPickerPlayer (id) {
       }
     }
   })
+  const team2Values = firebasedb.ref(`games/${id}/teams/team2`).once('value').then(function(snapshot){
+    const team = snapshot.val();
+    //console.log('this is the team' + JSON.stringify(team));
+    var count = 0;
+    for(var key in team){
+      if(count <= 0){
+        if(team[key]['turn'] !== 'played'){
+           const person = [key]
+           //console.log('p' + person);
+           count++;
+           //changed the person to be 'playing
+           var updates = {};
+           updates[`games/${id}/teams/team2/${person}/turn`] = 'playing';
+           //console.log(updates[`games/${id}/teams/team1/${person}/name`])
+           return firebasedb.ref().update(updates)
+        }
+
+      }
+    }
+  })
+
 }
 
 export function emojiWord () {
   return 'Santa Baby'
 }
 
-export function postEmoji (emoji1, team) {
-  fakeFirebaseDatabase[3296]['emoji'][team] = emoji1
+export function postEmoji (emoji, team, id) {
+  const updates = {};
+  updates[`games/${id}/teamEmoji/${team}`] = {emoji};
+  return firebasedb.ref().update(updates);
 }
 
 export function getEmoji (team) {
   return fakeFirebaseDatabase[3296]['emoji'][team]
 }
 
-export function addPoint (team) {
-  console.log(team + ' gets a point!')
+export function addPoint (winner, team, id) {
+  var updates = {};
+  updates[`games/${id}/roundWinner/${team}`] = {winner};
+  firebasedb.ref().update(updates);
+  checkPoint(id);
+
 }
+
+export function checkPoint (id) {
+  const winnercheck = firebasedb.ref(`games/${id}/roundWinner/`)
+  winnercheck.on('value', (snapshot) => {
+    const team1 = snapshot.val().team1.winner;
+    const team2 = snapshot.val().team2.winner;
+    if(team1 === team2){
+      const pastPoints = firebasedb.ref(`games/${id}/teamPoints/${team1}/point`).once('value').then((snapshot1) => {
+        const currentPoint = snapshot1.val();
+        const winUpdate = {};
+        const point = currentPoint + 1;
+        winUpdate[`games/${id}/teamPoints/${team1}`] = {point}
+        firebasedb.ref().update(winUpdate);
+      })
+    }
+
+  })
+}
+
