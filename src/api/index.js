@@ -15,7 +15,8 @@ export function createGame (theme, name) {
   //fakeFirebaseDatabase[gameId] = { selectedTheme: theme, gameName: name, players : []}
   const gameData = {
     name : name,
-    theme: theme
+    theme: theme,
+    teamAssign: false
   };
   //get random keyId
   const key = firebasedb.ref().child('games').push().key;
@@ -34,11 +35,26 @@ export function getGame (id) {
   return fakeFirebaseDatabase[id]
 }
 
-export function saveUserName (id,name) {
-  fakeFirebaseDatabase[id].players.push(name);
+export function saveUserName (id, name) {
+  //firebasedb.ref(`games/${id}/players`).push(name)
+  var thing = firebasedb.ref(`games/${id}/teamAssign`).once('value').then(function(snapshot){
+    const team1 = (snapshot.val())
+    if(team1 === false){
+      firebasedb.ref(`games/${id}/teams/team2`).push(name);
+      var updates = {};
+      updates[`games/${id}/teamAssign`] = true;
+      return firebasedb.ref().update(updates)
+    } else {
+      firebasedb.ref(`games/${id}/teams/team1`).push(name);
+      var updates = {};
+      updates[`games/${id}/teamAssign`] = false;
+      return firebasedb.ref().update(updates)
+    }
+  })
 }
 
 export function getTeamList (id) {
+  /*
   const playersList = fakeFirebaseDatabase[id].players;
   let team1 = [];
   let team2 = [];
@@ -54,7 +70,7 @@ export function getTeamList (id) {
   }
 
   const teamList = fakeFirebaseDatabase[id]['teams'] = { team1: team1, team2: team2};
-  return teamList
+  return teamList */
 }
 
 export function emojiPickerPlayer (team) {

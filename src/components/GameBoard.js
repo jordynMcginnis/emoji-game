@@ -1,13 +1,14 @@
 import React from 'react';
 import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji } from '../api/index.js';
 import EmojiPicker from './EmojiPicker.js'
+import { firebasedb } from '../utils/config.js'
 
 class GameBoard extends React.Component {
   constructor(props){
     super(props);
     this.state = {
       name : '',
-      teamList: {},
+      teamList: '',
       render : 'name',
       playersTeam: '',
       currentEmoji: ''
@@ -23,6 +24,24 @@ class GameBoard extends React.Component {
       name : target.value
     }))
   }
+  componentDidMount() {
+  const id = this.props.match.params.id;
+  //const team1 = firebasedb.ref(`games/${id}/teams`);
+  const teamRef = firebasedb.ref(`games/${id}/teams`);
+  teamRef.on('value', (snapshot) => {
+    let items = snapshot.val();
+    let newState = [];
+    for (let item in items) {
+      newState.push({
+        [item]: items[item],
+      });
+    }
+    this.setState({
+      teamList: newState
+    });
+  });
+}
+
   submitName () {
     const id = this.props.match.params.id;
 
@@ -31,8 +50,19 @@ class GameBoard extends React.Component {
       render : 'loading'
     }))
     this.grabTeamList(id);
+
   }
   grabTeamList (id) {
+    console.log(this.state.teamList)
+    setTimeout(()=> {
+      this.setState(() => ({
+        render: 'teamList',
+      }))
+      this.getEmojiPicker()
+    }, 4000)
+    console.log(this.state.teamList[0].team1)
+  }
+    /*
     const team = getTeamList(id)['team1'].indexOf(this.state.name) > -1
       ? 'team1'
       : 'team2'
@@ -45,8 +75,9 @@ class GameBoard extends React.Component {
       }))
       this.getEmojiPicker()
     }, 4000)
-  }
+  } */
   getEmojiPicker () {
+    /*
     setTimeout(() => {
       if(this.state.name === emojiPickerPlayer()){
         this.setState(() => ({ render : 'EmojiPicker'}))
@@ -54,7 +85,7 @@ class GameBoard extends React.Component {
         this.setState(() => ({ render : 'EmojiGuesser'}));
         this.grabEmojis()
       }
-    }, 4000)
+    }, 4000) */
   }
   grabEmojis () {
     this.setState(() => ({currentEmoji : getEmoji(this.state.playersTeam)}))
@@ -77,6 +108,7 @@ class GameBoard extends React.Component {
               <div className='team1'>
                 <h2>Team 1:</h2>
                 <ul>
+
                   {teamList.team1.map((player) => {
                     return <li> {player}</li>
                   })}
