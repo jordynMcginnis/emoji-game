@@ -98,7 +98,6 @@ export function emojiPickerPlayer (id) {
            //console.log(updates[`games/${id}/teams/team1/${person}/name`])
            return firebasedb.ref().update(updates)
         }
-
       }
     }
   })
@@ -106,7 +105,7 @@ export function emojiPickerPlayer (id) {
     const team = snapshot.val();
     //console.log('this is the team' + JSON.stringify(team));
     var count = 0;
-    for(var key in team){
+    for(let key in team){
       if(count <= 0){
         if(team[key]['turn'] !== 'played'){
            const person = [key]
@@ -116,13 +115,13 @@ export function emojiPickerPlayer (id) {
            var updates = {};
            updates[`games/${id}/teams/team2/${person}/turn`] = 'playing';
            //console.log(updates[`games/${id}/teams/team1/${person}/name`])
-           return firebasedb.ref().update(updates)
+            return firebasedb.ref().update(updates)
         }
 
       }
     }
   })
-
+  return finalCheck()
 }
 
 export function emojiWord () {
@@ -143,8 +142,7 @@ export function addPoint (winner, team, id) {
   var updates = {};
   updates[`games/${id}/roundWinner/${team}`] = {winner};
   firebasedb.ref().update(updates);
-  checkPoint(id);
-
+  checkPoint(id)
 }
 
 export function checkPoint (id) {
@@ -159,9 +157,48 @@ export function checkPoint (id) {
         const point = currentPoint + 1;
         winUpdate[`games/${id}/teamPoints/${team1}`] = {point}
         firebasedb.ref().update(winUpdate);
+        newMove(id);
       })
     }
-
   })
+
 }
 
+export function newMove (id) {
+  const playerStatus = firebasedb.ref(`games/${id}/teams/team1`).once('value').then((snapshot) => {
+    const items = snapshot.val();
+    for(let key in items){
+      if(items[key]['turn'] === 'playing'){
+        const player = [key]
+        console.log(player)
+        const updates = {};
+        updates[`games/${id}/teams/team1/${player}/turn`] = 'played'
+        firebasedb.ref().update(updates);
+
+      } else {
+        console.log('not playing' + items[key].name)
+      }
+    }
+  })
+    const player2Status = firebasedb.ref(`games/${id}/teams/team2`).once('value').then((snapshot) => {
+
+    const items = snapshot.val();
+    for(let key in items){
+      if(items[key]['turn'] === 'playing'){
+        const player = [key]
+        console.log(player)
+        const updates = {};
+        updates[`games/${id}/teams/team2/${player}/turn`] = 'played'
+        firebasedb.ref().update(updates);
+        return emojiPickerPlayer(id)
+      } else {
+        console.log('not playing' + items[key].name)
+      }
+    }
+  })
+  console.log('this ran');
+}
+
+export function finalCheck (id) {
+  return false
+}

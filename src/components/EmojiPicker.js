@@ -8,7 +8,7 @@ class EmojiPicker extends React.Component {
       emojiWord: '',
       emoji: '',
       render: 'submit',
-      playersTeam: ''
+      playersTeam: '',
     }
     this.handleChange = this.handleChange.bind(this);
     //this.handleTeam1Winner = this.handleTeam1Winner.bind(this);
@@ -18,7 +18,6 @@ class EmojiPicker extends React.Component {
   }
   componentDidMount () {
     this.getEmojiWord()
-    console.log('this should say team' + this.props.playersTeam)
     this.setState(() => ({
       playersTeam : this.props.playersTeam
     }))
@@ -44,9 +43,8 @@ class EmojiPicker extends React.Component {
     this.setState(() => ({
       winner
     }))
-
     setTimeout(() => {
-      addPoint(winner, this.state.playersTeam, this.props.id);
+      addPoint(winner, this.state.playersTeam, this.props.id)
     },2000)
   }
   render () {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji } from '../api/index.js';
+import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji, finalCheck } from '../api/index.js';
 import EmojiPicker from './EmojiPicker.js'
 import { firebasedb } from '../utils/config.js'
 
@@ -14,12 +14,16 @@ class GameBoard extends React.Component {
       currentEmoji: '',
       team1List: [1,2,3],
       team2List: [1,2,3],
+      team1points: 0,
+      team2points: 0,
+      play: true
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
     this.grabTeamList = this.grabTeamList.bind(this);
     this.getEmojiPicker = this.getEmojiPicker.bind(this);
     this.grabEmojis = this.grabEmojis.bind(this);
+    this.checkEnd = this.checkEnd.bind(this);
   }
   handleName ({ target }) {
     this.setState(() => ({
@@ -28,6 +32,21 @@ class GameBoard extends React.Component {
   }
   componentDidMount() {
   const id = this.props.match.params.id;
+
+  const played = firebasedb.ref(`games/${id}/teams/team1`);
+  played.on('value', (snapshot) => {
+    const items = snapshot.val();
+    let value = items === null ? 'stillPlaying' : false
+    for(var key in items){
+      if(items[key].turn === 'playing' || items[key].turn === false){
+        value = 'stillPlaying'
+      }else {
+        value = false
+      }
+    }
+    value === false ? this.setState(() => ({render : false})) : console.log('still playing')
+  })
+
   const team1 = firebasedb.ref(`games/${id}/teams/team1`);
   team1.on('value', (snapshot) => {
     let items = snapshot.val();
@@ -65,6 +84,17 @@ class GameBoard extends React.Component {
       team2List: newState,
     });
   })
+  const pointChecker = firebasedb.ref(`games/${id}/teamPoints/`);
+  pointChecker.on('value', (points) => {
+    const point2 = points.val().team2.point;
+    const point1 = points.val().team1.point;
+
+    this.setState(() => ({
+      team1points: point1,
+      team2points: point2
+    }))
+
+  })
 }
 
   submitName () {
@@ -77,14 +107,20 @@ class GameBoard extends React.Component {
     setTimeout(() => {
       this.grabTeamList(id);
     }, 2000)
-
-
+  }
+  checkEnd() {
+    if(finalCheck() === false){
+      this.setState(() => ({
+        render: finalCheck()
+      }))
+    }
   }
   grabTeamList (id) {
     this.setState(() => ({
       render: 'teamList',
     }))
     emojiPickerPlayer(id)
+    console.log(emojiPickerPlayer(id));
     setTimeout(()=> {
 
       this.getEmojiPicker()
@@ -97,6 +133,7 @@ class GameBoard extends React.Component {
     const team = this.state.playersTeam;
     const checkTurn1 = firebasedb.ref(`games/${id}/teams/${team}`);
     checkTurn1.on('value', (snapshot1) => {
+      this.setState(() => ({ render: 'EmojiGuesser'}))
       let items = snapshot1.val();
        for(let key in items){
         if(items[key].name === this.state.name && items[key].turn === 'playing'){
@@ -106,18 +143,6 @@ class GameBoard extends React.Component {
         }
       }
     })
-  /*
-    const checkTurn = firebasedb.ref(`games/${id}/teams/${team}`).once('value').then((snapshot) => {
-      this.setState(() => ({ render: 'EmojiGuesser'}))
-      let items = snapshot.val();
-       for(let key in items){
-        if(items[key].name === this.state.name && items[key].turn === 'playing'){
-          this.setState(() => ({
-            render: 'EmojiPicker'
-          }))
-        }
-      }
-    }) */
     this.grabEmojis(id);
   }
   grabEmojis (id) {
@@ -164,15 +189,27 @@ class GameBoard extends React.Component {
           : null
         }
         { render ==='EmojiPicker'
-          ? <EmojiPicker playersTeam={this.state.playersTeam} id={this.props.match.params.id}/>
+          ? <EmojiPicker playersTeam={this.state.playersTeam} id={this.props.match.params.id} check={this.checkEnd}/>
           : null
         }
         {
           render === 'EmojiGuesser'
           ? <div>
+
               <h5>Guess the word!</h5>
               <h2>{currentEmoji}</h2>
               <h5>Shout out the word before the other team!</h5>
+              <h6> team 1: {this.state.team1points} </h6>
+              <h6> team 2: {this.state.team2points}</h6>
+            </div>
+          : null
+        }
+        {
+          render === false
+          ? <div>
+              <p>game over!</p>
+              <p> team 1: {this.state.team1 }</p>
+              <p>team 2: {this.state.team2} </p>
             </div>
           : null
         }
