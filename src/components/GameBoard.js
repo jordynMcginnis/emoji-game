@@ -2,7 +2,7 @@ import React from 'react';
 import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji, finalCheck } from '../api/index.js';
 import EmojiPicker from './EmojiPicker.js'
 import { firebasedb } from '../utils/config.js'
-
+import themes from '../utils/config.js'
 class GameBoard extends React.Component {
   constructor(props){
     super(props);
@@ -31,71 +31,71 @@ class GameBoard extends React.Component {
     }))
   }
   componentDidMount() {
-  const id = this.props.match.params.id;
+    const id = this.props.match.params.id;
 
-  const played = firebasedb.ref(`games/${id}/teams/team1`);
-  played.on('value', (snapshot) => {
-    const items = snapshot.val();
-    let value = items === null ? 'stillPlaying' : false
-    for(var key in items){
-      if(items[key].turn === 'playing' || items[key].turn === false){
-        value = 'stillPlaying'
-      }else {
-        value = false
+    const played = firebasedb.ref(`games/${id}/teams/team1`);
+    played.on('value', (snapshot) => {
+      const items = snapshot.val();
+      let value = items === null ? 'stillPlaying' : false
+      for(var key in items){
+        if(items[key].turn === 'playing' || items[key].turn === false){
+          value = 'stillPlaying'
+        }else {
+          value = false
+        }
       }
-    }
-    value === false ? this.setState(() => ({render : false})) : console.log('still playing')
-  })
+      value === false ? this.setState(() => ({render : false})) : console.log('still playing')
+    })
 
-  const team1 = firebasedb.ref(`games/${id}/teams/team1`);
-  team1.on('value', (snapshot) => {
-    let items = snapshot.val();
-    let newState = [];
-    for (let item in items) {
-      newState.push(
-        items[item].name
-      );
-      if(this.state.name === items[item].name){
-        this.setState(() => ({
-          playersTeam: 'team1'
-        }))
+    const team1 = firebasedb.ref(`games/${id}/teams/team1`);
+    team1.on('value', (snapshot) => {
+      let items = snapshot.val();
+      let newState = [];
+      for (let item in items) {
+        newState.push(
+          items[item].name
+        );
+        if(this.state.name === items[item].name){
+          this.setState(() => ({
+            playersTeam: 'team1'
+          }))
+        }
       }
-    }
-     this.setState({
-      team1List: newState
-    });
-  })
-  const team2 = firebasedb.ref(`games/${id}/teams/team2`);
-  team2.on('value', (snapshot) => {
-    let items = snapshot.val();
-    //console.log('second' + JSON.stringify(items["-L-4dyiNPLwzpRY0IE-W"].name));
-    let newState = [];
-    for (let item in items) {
-      newState.push(
-        items[item].name
-      );
-      if(this.state.name === items[item].name){
-        this.setState(() => ({
-          playersTeam: 'team2'
-        }))
+       this.setState({
+        team1List: newState
+      });
+    })
+    const team2 = firebasedb.ref(`games/${id}/teams/team2`);
+    team2.on('value', (snapshot) => {
+      let items = snapshot.val();
+      //console.log('second' + JSON.stringify(items["-L-4dyiNPLwzpRY0IE-W"].name));
+      let newState = [];
+      for (let item in items) {
+        newState.push(
+          items[item].name
+        );
+        if(this.state.name === items[item].name){
+          this.setState(() => ({
+            playersTeam: 'team2'
+          }))
+        }
       }
-    }
-     this.setState({
-      team2List: newState,
-    });
-  })
-  const pointChecker = firebasedb.ref(`games/${id}/teamPoints/`);
-  pointChecker.on('value', (points) => {
-    const point2 = points.val().team2.point;
-    const point1 = points.val().team1.point;
+       this.setState({
+        team2List: newState,
+      });
+    })
+    const pointChecker = firebasedb.ref(`games/${id}/teamPoints/`);
+    pointChecker.on('value', (points) => {
+      const point2 = points.val().team2.point;
+      const point1 = points.val().team1.point;
 
-    this.setState(() => ({
-      team1points: point1,
-      team2points: point2
-    }))
+      this.setState(() => ({
+        team1points: point1,
+        team2points: point2
+      }))
 
-  })
-}
+    })
+  }
 
   submitName () {
     const id = this.props.match.params.id;

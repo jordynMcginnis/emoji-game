@@ -6,3 +6,5 @@ const themes = {
   family: ['jordyn', 'tyler', 'mimi', 'stacey', 'shawn', 'ryan m.', 'ryan e.', 'chelsey', 'cash', 'kenzi', 'scarlett', 'sophie', 'audrey', 'ireland'];
   //christmasCharacters: ['grinch', 'santa claus', 'rudolph', 'buddy the elf', 'mrs claus', 'jack frost', 'jack skellington', 'father time', 'frosty the snowman', '' ]
 }
+
+export default themes
