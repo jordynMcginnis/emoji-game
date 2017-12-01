@@ -40,10 +40,10 @@ class NewGame extends React.Component {
           onChange={this.handleChange}
           options={[
             { value: 'christmasSongs', label: 'Christmas Songs' },
-            { value: 'chirstmasCharacters', label: 'Christmas Movie Characters' },
+            { value: 'family', label: 'family members' },
             { value: 'christmasFood', label: 'Christmas Food' },
             { value: 'Elf', label: 'Elf the movie' },
-            { value: 'cities', label: 'Cities' },
+            { value: 'christmasRandom', label: 'christmas' },
           ]}
         />
         <input

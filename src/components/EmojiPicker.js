@@ -1,6 +1,7 @@
 import React from 'react';
-import { emojiWord, postEmoji, addPoint } from '../api/index.js';
-
+import { emojiWord, postEmoji, addPoint, getTheme, themeInfo, endGame } from '../api/index.js';
+import Themes from '../utils/themes.js';
+import { firebasedb } from '../utils/config.js'
 class EmojiPicker extends React.Component {
   constructor(props){
     super(props);
@@ -9,23 +10,50 @@ class EmojiPicker extends React.Component {
       emoji: '',
       render: 'submit',
       playersTeam: '',
+      theme: [],
+      active: 0,
+      past: [1],
+      playersAmount: 0,
     }
     this.handleChange = this.handleChange.bind(this);
     //this.handleTeam1Winner = this.handleTeam1Winner.bind(this);
     this.handleTeamWinner = this.handleTeamWinner.bind(this);
     this.getEmojiWord = this.getEmojiWord.bind(this);
     this.submitEmoji = this.submitEmoji.bind(this);
+    this.checkNow = this.checkNow.bind(this);
   }
   componentDidMount () {
+
     this.getEmojiWord()
     this.setState(() => ({
       playersTeam : this.props.playersTeam
     }))
+    //console.log('theme'+ Themes[emojiWord(this.props.id)])
+    //console.log('emoji word returned:' + emojiWord(this.props.id))
   }
   getEmojiWord () {
-    this.setState(() => ({
-      emojiWord : emojiWord()
-    }))
+    const id = this.props.id;
+    const theme = firebasedb.ref(`games/${id}/theme`).once('value').then((snapshot) => {
+      const value =  snapshot.val();
+      const themeArr = Themes[value]
+      themeInfo(this.props.id, themeArr.length-1);
+      this.setState(() => ({
+        theme: themeArr,
+      }))
+
+      const check = firebasedb.ref(`games/${id}/themeActive`)
+      check.on('value', (snapshot1) => {
+        const themePosition = snapshot1.val();
+        console.log(themePosition)
+        const current = themeArr[themePosition]
+        this.setState(() => ({
+          emojiWord: current
+        }))
+      })
+    })
+  }
+  checkNow () {
+
   }
   handleChange ({ target }) {
     this.setState(() => ({
@@ -45,7 +73,21 @@ class EmojiPicker extends React.Component {
     }))
     setTimeout(() => {
       addPoint(winner, this.state.playersTeam, this.props.id)
-    },2000)
+    }, 1000)
+
+
+    setTimeout(() => {
+      const amount = firebasedb.ref(`games/${this.props.id}/playerAmount`).once('value').then((snapshot) => {
+        const totalAmount = snapshot.val()
+        const turnAmount = firebasedb.ref(`games/${this.props.id}/turnAmount`).once('value').then((snapshot1) => {
+          const totalTurn = snapshot1.val();
+          if(totalAmount === totalTurn){
+            endGame(this.props.id, 'end')
+          }
+        })
+      })
+    }, 3000)
+
   }
   render () {
     return (

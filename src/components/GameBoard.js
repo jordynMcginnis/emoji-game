@@ -2,7 +2,8 @@ import React from 'react';
 import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji, finalCheck } from '../api/index.js';
 import EmojiPicker from './EmojiPicker.js'
 import { firebasedb } from '../utils/config.js'
-import themes from '../utils/config.js'
+import Themes from '../utils/themes.js'
+
 class GameBoard extends React.Component {
   constructor(props){
     super(props);
@@ -16,7 +17,9 @@ class GameBoard extends React.Component {
       team2List: [1,2,3],
       team1points: 0,
       team2points: 0,
-      play: true
+      play: true,
+      playerAmount: 0,
+
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
@@ -33,19 +36,6 @@ class GameBoard extends React.Component {
   componentDidMount() {
     const id = this.props.match.params.id;
 
-    const played = firebasedb.ref(`games/${id}/teams/team1`);
-    played.on('value', (snapshot) => {
-      const items = snapshot.val();
-      let value = items === null ? 'stillPlaying' : false
-      for(var key in items){
-        if(items[key].turn === 'playing' || items[key].turn === false){
-          value = 'stillPlaying'
-        }else {
-          value = false
-        }
-      }
-      value === false ? this.setState(() => ({render : false})) : console.log('still playing')
-    })
 
     const team1 = firebasedb.ref(`games/${id}/teams/team1`);
     team1.on('value', (snapshot) => {
@@ -94,6 +84,33 @@ class GameBoard extends React.Component {
         team2points: point2
       }))
 
+    })
+    const stillPlaying = firebasedb.ref(`games/${id}/play`)
+    stillPlaying.on('value', (status) => {
+      const statusPlay = status.val()
+      if(statusPlay === false){
+        this.setState(() => ({render: false}))
+      }
+    })
+
+    const playerAmount = firebasedb.ref(`games/${id}/teams/team1`);
+    playerAmount.on('value', (snapshot) => {
+      const items = snapshot.val();
+      let count = 0;
+      for(var key in items){
+        count++;
+      }
+      const player2Amoutn = firebasedb.ref(`games/${id}/teams/team2`)
+      .on('value', (snapshot1) => {
+        const items2 = snapshot1.val();
+        for(var key2 in items2){
+          count++;
+        }
+      this.setState(() => {
+        playerAmount : count
+      })
+
+      })
     })
   }
 
@@ -208,8 +225,8 @@ class GameBoard extends React.Component {
           render === false
           ? <div>
               <p>game over!</p>
-              <p> team 1: {this.state.team1 }</p>
-              <p>team 2: {this.state.team2} </p>
+              <p> team 1: {this.state.team1points }</p>
+              <p>team 2: {this.state.team2points} </p>
             </div>
           : null
         }

@@ -1,5 +1,5 @@
 import { firebasedb } from '../utils/config.js';
-
+import Themes from '../utils/themes.js';
 const fakeFirebaseDatabase = {
   3296: {gameName : 'McGinnis Family', selectedTheme:'Elf', players: ['stacey','shawn','jordyn','tyler'], emoji : { team1 : '😂', team2: '😂'}},
   4567: {gameName : 'santa', selectedTheme:'christmasSongs', players: [], emoji : { team1 : '', team2: ''}},
@@ -19,13 +19,39 @@ export function createGame (theme, name) {
     teamAssign: false,
     roundWinner: {team2: {winner: 'no-winner'}, team1: {winner: 'nothing'}},
     teamPoints: {team2: {point: 0}, team1: {point: 0}},
+    themeActive: -1,
+    themePast: { past : -2},
+    playerAmount: 0,
+    turnAmount : 0,
+    play: true
   };
   //get random keyId
   const key = firebasedb.ref().child('games').push().key;
-  var updates = {};
+  let updates = {};
   updates['/games/' + key] = gameData;
   return firebasedb.ref().update(updates);
 
+
+}
+export function themeInfo (id, themeLength) {
+
+  const position = getRandomArbitrary(0, themeLength);
+  const pastspots = firebasedb.ref(`games/${id}/themePast`).once('value').then((snapshot) => {
+    const items = snapshot.val()
+    for(var key in items){
+      if(items[key] === position){
+        themeInfo()
+      } else {
+        console.log('good')
+      }
+    }
+    let updates = {};
+    updates[`games/${id}/themeActive`] = position;
+    firebasedb.ref().update(updates);
+    let updates2 = {};
+    updates2[`games/${id}/themePast`] = {position: position};
+    firebasedb.ref().update(updates2)
+  })
 
 }
 
@@ -39,6 +65,18 @@ export function getGame (id) {
 
 export function saveUserName (id, name) {
   //firebasedb.ref(`games/${id}/players`).push(name)
+  var players = firebasedb.ref(`games/${id}/playerAmount`).once('value').then(function(snapshot1){
+    const amount = snapshot1.val() + 1;
+    const updates1 = {};
+    updates1[`games/${id}/playerAmount`] = amount;
+    firebasedb.ref().update(updates1)
+  })
+   var playersTurn = firebasedb.ref(`games/${id}/turnAmount`).once('value').then(function(snapshot1){
+    const amount1 = snapshot1.val() + 1;
+    const updates2 = {};
+    updates2[`games/${id}/turnAmount`] = amount1;
+    firebasedb.ref().update(updates2)
+  })
   const myName = name;
   const turn = { turn: false, name: myName }
   var checkvalue = firebasedb.ref(`games/${id}/teamAssign`).once('value').then(function(snapshot){
@@ -57,6 +95,8 @@ export function saveUserName (id, name) {
       return firebasedb.ref().update(updates)
     }
   })
+
+
 }
 
 export function getTeamList (id) {
@@ -124,8 +164,11 @@ export function emojiPickerPlayer (id) {
   return finalCheck()
 }
 
-export function emojiWord () {
-  return 'Santa Baby'
+export function emojiWord (id) {
+  const theme = firebasedb.ref(`games/${id}/theme`).once('value').then((snapshot) => {
+    const value = snapshot.val();
+  })
+
 }
 
 export function postEmoji (emoji, team, id) {
@@ -201,4 +244,19 @@ export function newMove (id) {
 
 export function finalCheck (id) {
   return false
+}
+export function endGame (id) {
+  const updates = {};
+  updates[`games/${id}/play`] = false;
+  firebasedb.ref().update(updates)
+  setTimeout(() => {
+    deleteGame()
+  },5000)
+}
+
+export function deleteGame (id) {
+  const game = firebasedb.ref(`/games/${id}`);
+  game.remove();
+  window.location.replace("http://localhost:3000");
+
 }
