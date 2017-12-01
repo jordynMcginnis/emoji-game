@@ -19,7 +19,8 @@ class GameBoard extends React.Component {
       team2points: 0,
       play: true,
       playerAmount: 0,
-
+      startTime: '',
+      timeLeft: 5
     }
     this.handleName = this.handleName.bind(this);
     this.submitName = this.submitName.bind(this);
@@ -27,6 +28,7 @@ class GameBoard extends React.Component {
     this.getEmojiPicker = this.getEmojiPicker.bind(this);
     this.grabEmojis = this.grabEmojis.bind(this);
     this.checkEnd = this.checkEnd.bind(this);
+    this.startGame = this.startGame.bind(this);
   }
   handleName ({ target }) {
     this.setState(() => ({
@@ -116,14 +118,36 @@ class GameBoard extends React.Component {
 
   submitName () {
     const id = this.props.match.params.id;
-
-    saveUserName(id, this.state.name);
     this.setState(() => ({
       render : 'loading'
     }))
+
     setTimeout(() => {
       this.grabTeamList(id);
-    }, 2000)
+    }, 4000)
+  }
+
+  grabTeamList (id) {
+    this.setState(() => ({
+      render: 'teamList',
+    }))
+
+    saveUserName(id, this.state.name);
+
+    const getStart = firebasedb.ref(`games/${id}/play`)
+    getStart.on('value', (response) => {
+      const checkStart = response.val();
+      if(checkStart === true){
+        this.getEmojiPicker()
+      }
+    })
+
+  }
+  startGame () {
+    const id = this.props.match.params.id;
+    const updates = {};
+    updates[`games/${id}/play`] = true;
+    firebasedb.ref().update(updates);
   }
   checkEnd() {
     if(finalCheck() === false){
@@ -132,38 +156,28 @@ class GameBoard extends React.Component {
       }))
     }
   }
-  grabTeamList (id) {
-    this.setState(() => ({
-      render: 'teamList',
-    }))
-    emojiPickerPlayer(id)
-    console.log(emojiPickerPlayer(id));
-    setTimeout(()=> {
-
-      this.getEmojiPicker()
-    }, 4000)
-  }
   getEmojiPicker () {
     const id = this.props.match.params.id;
-
-
+    emojiPickerPlayer(id)
     const team = this.state.playersTeam;
     const checkTurn1 = firebasedb.ref(`games/${id}/teams/${team}`);
     checkTurn1.on('value', (snapshot1) => {
-      this.setState(() => ({ render: 'EmojiGuesser'}))
+
       let items = snapshot1.val();
        for(let key in items){
         if(items[key].name === this.state.name && items[key].turn === 'playing'){
           this.setState(() => ({
             render: 'EmojiPicker'
           }))
+        } else {
+           this.setState(() => ({ render: 'EmojiGuesser'}))
         }
       }
     })
     this.grabEmojis(id);
   }
   grabEmojis (id) {
-    console.log('this ran!')
+    //console.log('this ran!')
     const team = this.state.playersTeam;
     //this.setState(() => ({currentEmoji : getEmoji(this.state.playersTeam)}))
     const getEmoji = firebasedb.ref(`games/${id}/teamEmoji/${team}/emoji`)
@@ -202,6 +216,7 @@ class GameBoard extends React.Component {
                   })}
                 </ul>
               </div>
+              <button onClick={this.startGame}>Start</button>
             </div>
           : null
         }

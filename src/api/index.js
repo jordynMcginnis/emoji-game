@@ -19,11 +19,12 @@ export function createGame (theme, name) {
     teamAssign: false,
     roundWinner: {team2: {winner: 'no-winner'}, team1: {winner: 'nothing'}},
     teamPoints: {team2: {point: 0}, team1: {point: 0}},
-    themeActive: -1,
+    themeActive: 1,
     themePast: { past : -2},
     playerAmount: 0,
     turnAmount : 0,
-    play: true
+    play: 'waiting',
+    startTime: 0
   };
   //get random keyId
   const key = firebasedb.ref().child('games').push().key;
@@ -40,7 +41,7 @@ export function themeInfo (id, themeLength) {
     const items = snapshot.val()
     for(var key in items){
       if(items[key] === position){
-        themeInfo()
+        themeInfo(id, themeLength)
       } else {
         console.log('good')
       }
@@ -71,12 +72,7 @@ export function saveUserName (id, name) {
     updates1[`games/${id}/playerAmount`] = amount;
     firebasedb.ref().update(updates1)
   })
-   var playersTurn = firebasedb.ref(`games/${id}/turnAmount`).once('value').then(function(snapshot1){
-    const amount1 = snapshot1.val() + 1;
-    const updates2 = {};
-    updates2[`games/${id}/turnAmount`] = amount1;
-    firebasedb.ref().update(updates2)
-  })
+
   const myName = name;
   const turn = { turn: false, name: myName }
   var checkvalue = firebasedb.ref(`games/${id}/teamAssign`).once('value').then(function(snapshot){
@@ -95,7 +91,6 @@ export function saveUserName (id, name) {
       return firebasedb.ref().update(updates)
     }
   })
-
 
 }
 
@@ -124,6 +119,7 @@ export function emojiPickerPlayer (id) {
   //passes in the team they are in...
   const team1Values = firebasedb.ref(`games/${id}/teams/team1`).once('value').then(function(snapshot){
     const team = snapshot.val();
+    console.log('player1 should be here:' + team)
     //console.log('this is the team' + JSON.stringify(team));
     var count = 0;
     for(var key in team){
@@ -144,6 +140,7 @@ export function emojiPickerPlayer (id) {
   const team2Values = firebasedb.ref(`games/${id}/teams/team2`).once('value').then(function(snapshot){
     const team = snapshot.val();
     //console.log('this is the team' + JSON.stringify(team));
+    console.log('player2 should be here:' + team)
     var count = 0;
     for(let key in team){
       if(count <= 0){
@@ -250,13 +247,14 @@ export function endGame (id) {
   updates[`games/${id}/play`] = false;
   firebasedb.ref().update(updates)
   setTimeout(() => {
-    deleteGame()
-  },5000)
+    deleteGame(id)
+  },4000)
 }
 
 export function deleteGame (id) {
   const game = firebasedb.ref(`/games/${id}`);
-  game.remove();
   window.location.replace("http://localhost:3000");
+  game.remove();
+
 
 }

@@ -14,6 +14,7 @@ class EmojiPicker extends React.Component {
       active: 0,
       past: [1],
       playersAmount: 0,
+      count : 0
     }
     this.handleChange = this.handleChange.bind(this);
     //this.handleTeam1Winner = this.handleTeam1Winner.bind(this);
@@ -68,12 +69,23 @@ class EmojiPicker extends React.Component {
 
   }
   handleTeamWinner (winner) {
+    let id = this.props.id
+    console.log(id);
     this.setState(() => ({
       winner
     }))
     setTimeout(() => {
-      addPoint(winner, this.state.playersTeam, this.props.id)
+      addPoint(winner, this.state.playersTeam, id)
     }, 1000)
+    if(this.state.count === 0){
+      this.setState(()=>({count : 1}))
+      var playersTurn = firebasedb.ref(`games/${id}/turnAmount`).once('value').then(function(snapshot1){
+        const amount1 = snapshot1.val() + 1;
+        const updates2 = {};
+        updates2[`games/${id}/turnAmount`] = amount1;
+        firebasedb.ref().update(updates2)
+      })
+    }
 
 
     setTimeout(() => {
