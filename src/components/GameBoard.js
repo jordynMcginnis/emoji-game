@@ -3,6 +3,7 @@ import { saveUserName, getTeamList, emojiPickerPlayer, getEmoji, finalCheck } fr
 import EmojiPicker from './EmojiPicker.js'
 import { firebasedb } from '../utils/config.js'
 import Themes from '../utils/themes.js'
+import { Link } from 'react-router-dom';
 
 class GameBoard extends React.Component {
   constructor(props){
@@ -29,6 +30,7 @@ class GameBoard extends React.Component {
     this.grabEmojis = this.grabEmojis.bind(this);
     this.checkEnd = this.checkEnd.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.startingGame = this.startingGame.bind(this);
   }
   handleName ({ target }) {
     this.setState(() => ({
@@ -138,10 +140,21 @@ class GameBoard extends React.Component {
     getStart.on('value', (response) => {
       const checkStart = response.val();
       if(checkStart === true){
-        this.getEmojiPicker()
+        this.startingGame(id)
+        emojiPickerPlayer(id)
       }
     })
+  }
+  startingGame(id) {
 
+    this.setState(() => {
+      render: 'loading'
+    })
+    if(this.state.render !== false){
+      setTimeout(() => {
+        this.getEmojiPicker()
+      }, 4000)
+    }
   }
   startGame () {
     const id = this.props.match.params.id;
@@ -158,19 +171,19 @@ class GameBoard extends React.Component {
   }
   getEmojiPicker () {
     const id = this.props.match.params.id;
-    emojiPickerPlayer(id)
+
     const team = this.state.playersTeam;
     const checkTurn1 = firebasedb.ref(`games/${id}/teams/${team}`);
     checkTurn1.on('value', (snapshot1) => {
-
-      let items = snapshot1.val();
-       for(let key in items){
-        if(items[key].name === this.state.name && items[key].turn === 'playing'){
-          this.setState(() => ({
-            render: 'EmojiPicker'
-          }))
-        } else {
-           this.setState(() => ({ render: 'EmojiGuesser'}))
+      if(this.state.render !== false){
+        let items = snapshot1.val();
+        this.setState(() => ({ render: 'EmojiGuesser'}))
+        for(let key in items){
+          if(items[key].name === this.state.name && items[key].turn === 'playing'){
+           this.setState(() => ({
+             render: 'EmojiPicker'
+           }))
+          }
         }
       }
     })
@@ -208,6 +221,7 @@ class GameBoard extends React.Component {
                   })}
                 </ul>
               </div>
+               <button onClick={this.startGame} className='start'>Start</button>
               <div className='team2'>
                 <h2> Team 2:</h2>
                 <ul>
@@ -215,8 +229,9 @@ class GameBoard extends React.Component {
                     return <li> {player}</li>
                   })}
                 </ul>
+
               </div>
-              <button onClick={this.startGame}>Start</button>
+
             </div>
           : null
         }
@@ -227,7 +242,6 @@ class GameBoard extends React.Component {
         {
           render === 'EmojiGuesser'
           ? <div>
-
               <h5>Guess the word!</h5>
               <h2>{currentEmoji}</h2>
               <h5>Shout out the word before the other team!</h5>
@@ -238,10 +252,13 @@ class GameBoard extends React.Component {
         }
         {
           render === false
-          ? <div>
+          ? <div className='endGame'>
               <p>game over!</p>
               <p> team 1: {this.state.team1points }</p>
-              <p>team 2: {this.state.team2points} </p>
+              <p>team 2: {this.state.team2points}</p>
+              <Link to = '/'>
+                <button className='leave-button'>Leave Game </button>
+              </Link>
             </div>
           : null
         }

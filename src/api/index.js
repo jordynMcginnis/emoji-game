@@ -121,7 +121,8 @@ export function emojiPickerPlayer (id) {
     const team = snapshot.val();
     console.log('player1 should be here:' + team)
     //console.log('this is the team' + JSON.stringify(team));
-    var count = 0;
+    let stillPlaying: true
+    let count = 0;
     for(var key in team){
       if(count <= 0){
         if(team[key]['turn'] !== 'played'){
@@ -136,6 +137,7 @@ export function emojiPickerPlayer (id) {
         }
       }
     }
+    //count === 0 ? endGame(id) : console.log('should still playing')
   })
   const team2Values = firebasedb.ref(`games/${id}/teams/team2`).once('value').then(function(snapshot){
     const team = snapshot.val();
@@ -152,11 +154,12 @@ export function emojiPickerPlayer (id) {
            var updates = {};
            updates[`games/${id}/teams/team2/${person}/turn`] = 'playing';
            //console.log(updates[`games/${id}/teams/team1/${person}/name`])
-            return firebasedb.ref().update(updates)
+           return firebasedb.ref().update(updates)
         }
 
       }
     }
+    //count === 0 ? endGame(id) : console.log('should still playing')
   })
   return finalCheck()
 }
@@ -172,10 +175,6 @@ export function postEmoji (emoji, team, id) {
   const updates = {};
   updates[`games/${id}/teamEmoji/${team}`] = {emoji};
   return firebasedb.ref().update(updates);
-}
-
-export function getEmoji (team) {
-  return fakeFirebaseDatabase[3296]['emoji'][team]
 }
 
 export function addPoint (winner, team, id) {
@@ -197,6 +196,32 @@ export function checkPoint (id) {
         const point = currentPoint + 1;
         winUpdate[`games/${id}/teamPoints/${team1}`] = {point}
         firebasedb.ref().update(winUpdate);
+
+        const team1Update = {};
+        team1Update[`games/${id}/roundWinner/team1/winner`] = 'nothing'
+        firebasedb.ref().update(team1Update);
+        const team2Update = {};
+        team1Update[`games/${id}/roundWinner/team2/winner`] = 'notsure'
+        firebasedb.ref().update(team2Update);
+
+        var playersTurn = firebasedb.ref(`games/${id}/turnAmount`).once('value').then(function(snapshot1){
+        const amount1 = snapshot1.val() + 2;
+        const updates2 = {};
+        updates2[`games/${id}/turnAmount`] = amount1;
+        firebasedb.ref().update(updates2)
+        })
+
+      const amount = firebasedb.ref(`games/${id}/playerAmount`).once('value').then((snapshot) => {
+        const totalAmount = snapshot.val()
+        const turnAmount = firebasedb.ref(`games/${id}/turnAmount`).once('value').then((snapshot1) => {
+          const totalTurn = snapshot1.val();
+          if(totalAmount === totalTurn){
+            endGame(id, 'end')
+          }
+        })
+      })
+
+
         newMove(id);
       })
     }
@@ -242,19 +267,11 @@ export function newMove (id) {
 export function finalCheck (id) {
   return false
 }
+
 export function endGame (id) {
+  console.log('end game has ran')
   const updates = {};
   updates[`games/${id}/play`] = false;
   firebasedb.ref().update(updates)
-  setTimeout(() => {
-    deleteGame(id)
-  },4000)
 }
 
-export function deleteGame (id) {
-  const game = firebasedb.ref(`/games/${id}`);
-  window.location.replace("http://localhost:3000");
-  game.remove();
-
-
-}

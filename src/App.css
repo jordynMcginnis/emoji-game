@@ -10,7 +10,7 @@
 
 .Home-header {
   background-color: #222;
-  height: 220px;
+  height: 205px;
   padding: 20px;
   color: white;
   background-image: url('./photos/ee.gif');
@@ -21,6 +21,7 @@
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
+  max-height: 205px;
 }
 
 .top-titles {
@@ -47,6 +48,9 @@
 
 .Home-intro {
   font-size: large;
+  //background-color: green;
+  display: flex;
+  justify-content: center;
 }
 
 .home-game-list li {
@@ -54,6 +58,7 @@
   list-style: none;
   font-family: 'Fredoka One', cursive;
   font-size: 5vw;
+  margin-right: 45px;
 }
 
 li:hover{
@@ -281,4 +286,39 @@ li:hover{
   background-color: transparent;
   color: white;
   margin: 10px;
+}
+
+.start {
+  padding: 25px;
+  border-radius: 5px;
+  border-color: white;
+  border-width: 2px;
+  background-color: transparent;
+  color: white;
+  margin: 10px;
+  height: 10vh;
+  align-self: flex-end;
+}
+
+.leave-button {
+  padding: 20px;
+  border-radius: 5px;
+  border-color: white;
+  border-width: 2px;
+  background-color: transparent;
+  color: white;
+  margin: 10px;
+  height: 10vh;
+}
+
+.endGame {
+  background-image: url('./photos/r.gif');
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100vw;
+  background-position: top;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }

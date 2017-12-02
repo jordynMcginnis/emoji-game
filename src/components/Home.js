@@ -15,14 +15,16 @@ class Home extends React.Component {
     const gamesRef = firebasedb.ref('games');
     gamesRef.on('value', (snapshot) => {
       const games = snapshot.val();
-      console.log(games);
+      //console.log(games);
       let gameList = [];
       for(let item in games) {
-        gameList.push({
-          id : item,
-          gameName: games[item].name,
-          selectedTheme: games[item].theme
-        });
+        if(games[item].play === 'waiting'){
+          gameList.push({
+            id : item,
+            gameName: games[item].name,
+            selectedTheme: games[item].theme
+          });
+        }
       }
       this.setState({
         gameList

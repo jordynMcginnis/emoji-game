@@ -42,7 +42,7 @@ class NewGame extends React.Component {
             { value: 'christmasSongs', label: 'Christmas Songs' },
             { value: 'family', label: 'family members' },
             { value: 'christmasFood', label: 'Christmas Food' },
-            { value: 'Elf', label: 'Elf the movie' },
+            { value: 'elf', label: 'Elf the movie' },
             { value: 'christmasRandom', label: 'christmas' },
           ]}
         />

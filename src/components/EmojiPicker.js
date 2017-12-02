@@ -77,29 +77,9 @@ class EmojiPicker extends React.Component {
     setTimeout(() => {
       addPoint(winner, this.state.playersTeam, id)
     }, 1000)
-    if(this.state.count === 0){
-      this.setState(()=>({count : 1}))
-      var playersTurn = firebasedb.ref(`games/${id}/turnAmount`).once('value').then(function(snapshot1){
-        const amount1 = snapshot1.val() + 1;
-        const updates2 = {};
-        updates2[`games/${id}/turnAmount`] = amount1;
-        firebasedb.ref().update(updates2)
-      })
-    }
 
-
-    setTimeout(() => {
-      const amount = firebasedb.ref(`games/${this.props.id}/playerAmount`).once('value').then((snapshot) => {
-        const totalAmount = snapshot.val()
-        const turnAmount = firebasedb.ref(`games/${this.props.id}/turnAmount`).once('value').then((snapshot1) => {
-          const totalTurn = snapshot1.val();
-          if(totalAmount === totalTurn){
-            endGame(this.props.id, 'end')
-          }
-        })
-      })
-    }, 3000)
-
+    const deleteEmoji = firebasedb.ref(`games/${id}/teamEmoji`)
+    deleteEmoji.remove();
   }
   render () {
     return (
